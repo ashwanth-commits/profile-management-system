@@ -325,8 +325,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Ashwanth K**
-- GitHub: https://github.com/ashwanth-commits
+**Venkatesh Ponnuru**
+- GitHub: [@venkateshponnuru](https://github.com/438-venkatesh)
+- Email: venkateshponnuru6@gmail.com
 
 ## 🙏 Acknowledgments
 
@@ -338,10 +339,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you have any questions or need help, please:
-1. Check the [Issues](https://github.com/https://github.com/ashwanth-commits/profile-management-system/issues/issues) page
+1. Check the [Issues](https://github.com/your-repo/issues) page
 2. Create a new issue with detailed description
 3. Contact the author directly
 
 ---
 
-**Made with ❤️ by Kulla Ashwanth**
+**Made with  by Ashwnath Kulla**
