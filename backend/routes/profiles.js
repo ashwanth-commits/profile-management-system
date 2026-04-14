@@ -1,7 +1,11 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const Profile = require('../models/Profile');
+const profilesController = require('../controllers/profilesController');
+const { authenticateJWT } = require('../middleware/authMiddleware');
 const router = express.Router();
+
+// Require authentication for every profile route
+router.use(authenticateJWT);
 
 // Validation middleware
 const validateProfile = [
@@ -21,135 +25,25 @@ const validateProfile = [
 
 // Create or Update Profile
 router.post('/', validateProfile, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: 'Validation failed',
-        errors: errors.array()
-      });
-    }
-
-    const { name, email, age } = req.body;
-
-    // Check if profile with this email already exists
-    let profile = await Profile.findOne({ email });
-    
-    if (profile) {
-      // Update existing profile
-      profile.name = name;
-      profile.age = age;
-      await profile.save();
-      
-      return res.status(200).json({
-        success: true,
-        message: 'Profile updated successfully',
-        data: profile
-      });
-    } else {
-      // Create new profile
-      profile = new Profile({ name, email, age });
-      await profile.save();
-      
-      return res.status(201).json({
-        success: true,
-        message: 'Profile created successfully',
-        data: profile
-      });
-    }
-  } catch (error) {
-    console.error('Error creating/updating profile:', error);
-    
-    if (error.code === 11000) {
-      return res.status(400).json({
-        success: false,
-        message: 'Email already exists'
-      });
-    }
-    
-    res.status(500).json({
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
       success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
+      message: 'Validation failed',
+      errors: errors.array(),
     });
   }
+
+  return profilesController.upsertProfile(req, res);
 });
 
 // Get Profile by Email
-router.get('/:email', async (req, res) => {
-  try {
-    const { email } = req.params;
-    
-    const profile = await Profile.findOne({ email: email.toLowerCase() });
-    
-    if (!profile) {
-      return res.status(404).json({
-        success: false,
-        message: 'Profile not found'
-      });
-    }
-    
-    res.status(200).json({
-      success: true,
-      data: profile
-    });
-  } catch (error) {
-    console.error('Error fetching profile:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-    });
-  }
-});
+router.get('/:email', profilesController.getProfileByEmail);
 
 // Get All Profiles
-router.get('/', async (req, res) => {
-  try {
-    const profiles = await Profile.find().sort({ createdAt: -1 });
-    
-    res.status(200).json({
-      success: true,
-      count: profiles.length,
-      data: profiles
-    });
-  } catch (error) {
-    console.error('Error fetching profiles:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-    });
-  }
-});
+router.get('/', profilesController.getAllProfiles);
 
 // Delete Profile
-router.delete('/:email', async (req, res) => {
-  try {
-    const { email } = req.params;
-    
-    const profile = await Profile.findOneAndDelete({ email: email.toLowerCase() });
-    
-    if (!profile) {
-      return res.status(404).json({
-        success: false,
-        message: 'Profile not found'
-      });
-    }
-    
-    res.status(200).json({
-      success: true,
-      message: 'Profile deleted successfully'
-    });
-  } catch (error) {
-    console.error('Error deleting profile:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Something went wrong'
-    });
-  }
-});
+router.delete('/:email', profilesController.deleteProfile);
 
 module.exports = router;

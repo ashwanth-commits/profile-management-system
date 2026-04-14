@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -6,6 +7,7 @@ const morgan = require('morgan');
 const config = require('./config');
 
 // Import routes
+const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profiles');
 
 const app = express();
@@ -85,6 +87,7 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
+app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
 
 // 404 handler
