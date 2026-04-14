@@ -1,3 +1,6 @@
+## 🔗 GitHub Repository
+https://github.com/ashwanth-commits/profile-management-system
+
 # Profile Management System
 
 A modern, full-stack web application for managing user profiles with a professional UI and comprehensive CRUD operations. Built with React, TypeScript, Redux Toolkit, Material-UI, and Node.js.
